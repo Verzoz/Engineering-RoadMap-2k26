@@ -182,3 +182,45 @@ L'obiettivo di questo modulo è il cuore ingegneristico del progetto: scrivere l
 L'obiettivo di questo modulo è connettere l'umano alla simulazione e validare i dati tramite la dashboard preesistente.
 - [ ] **Integrazione DualSense (PS5):** Lettura degli assi analogici (stick) e dei grilletti tramite API native (es. SDL/XInput). Mappatura degli input sui Setpoint dell'algoritmo PID, non direttamente sui motori.
 - [ ] **Virtual Telemetry Streaming
+
+
+
+
+# 🚁 [Fase 4] - 3D Quadcopter Simulator & PID Control
+
+Sviluppo di un simulatore di volo tridimensionale custom (C/C++) per modellare la fisica di un quadricottero e testare algoritmi di stabilizzazione automatica.
+
+Questo progetto rappresenta il culmine della simulazione software prima del salto finale nel mondo reale. L'obiettivo è costruire un ambiente virtuale in cui validare matematicamente le logiche di controllo di volo, garantendo che il drone virtuale possa essere pilotato fluidamente tramite un controller fisico moderno (DualSense) senza ribaltarsi.
+
+## 🎯 Competenze Target
+- Matematica Spaziale 3D: Matrici di trasformazione e Quaternioni (per la risoluzione del problema del *Gimbal Lock*).
+- Fisica dei Corpi Rigidi: Gestione dei 6 Gradi di Libertà (6DoF), calcolo dei momenti torcenti (Torque) e vettori di spinta.
+- Teoria dei Controlli: Progettazione, implementazione e *tuning* di un controllore PID (Proporzionale-Integrale-Derivativo) a cascata.
+- Human-Machine Interface (HMI): Interfacciamento nativo a basso livello con periferiche di input complesse.
+
+---
+
+## 🗺️ Roadmap Architetturale (Fase 4)
+
+### Modulo 1: Infrastruttura 3D e Rendering
+L'obiettivo di questo modulo è elevare il motore grafico sviluppato nella Fase 2 allo spazio tridimensionale, creando il "banco di prova" visivo.
+- [ ] **Setup Pipeline 3D:** Inizializzazione di un contesto grafico 3D (tramite OpenGL o framework equivalenti) con gestione di Z-Buffer e proiezioni prospettiche.
+- [ ] **Modellazione Astratta:** Creazione di una rappresentazione visiva semplificata del drone (es. due cilindri incrociati per i bracci e indicatori per i rotori) per verificare visivamente orientamento e assetto.
+- [ ] **Telecamera Dinamica (Chase Cam):** Implementazione di una telecamera in terza persona vincolata matematicamente al modello, capace di seguirne fluidamente traslazioni e rotazioni.
+
+### Modulo 2: Fisica del Corpo Rigido e Cinematica (6DoF)
+L'obiettivo di questo modulo è applicare la gravità e modellare il modo in cui le spinte indipendenti dei 4 motori influenzano lo stato del drone nello spazio.
+- [ ] **Dinamica di Base:** Implementazione della massa, dell'inerzia e della gravità sul centro di massa del modello.
+- [ ] **Modello di Spinta dei Rotori:** Sviluppo di un sistema in cui ogni "motore" virtuale genera un vettore di spinta verticale e una coppia (torque) inversamente proporzionale.
+- [ ] **Calcolo dell'Assetto (Attitude):** Conversione delle spinte combinate nei movimenti fisici fondamentali del volo: Beccheggio (Pitch), Rollio (Roll), Imbardata (Yaw) e Traslazione Verticale (Thrust/Manetta).
+
+### Modulo 3: Teoria dei Controlli (Sistema PID)
+L'obiettivo di questo modulo è il cuore ingegneristico del progetto: scrivere l'algoritmo che impedisce al sistema di collassare, mantenendo il drone parallelo al suolo in assenza di input.
+- [ ] **Implementazione PID Controller:** Sviluppo di una classe riutilizzabile che, dati un Setpoint (angolo desiderato) e un Input (angolo attuale), calcola l'Output correttivo sommando gli errori Proporzionali, Integrali e Derivativi.
+- [ ] **PID Multi-Asse:** Istanziamento di cicli PID indipendenti per Roll, Pitch e Yaw. I risultati dei PID devono essere "miscelati" (Motor Mixing Algorithm) per decidere la velocità finale di ogni singolo rotore.
+- [ ] **Tuning del Loop di Controllo:** Metodologia empirica per calibrare i pesi ($Kp$, $Ki$, $Kd$) di ogni asse per eliminare oscillazioni e garantire una risposta reattiva del sistema.
+
+### Modulo 4: Human-Machine Interface e Telemetria
+L'obiettivo di questo modulo è connettere l'umano alla simulazione e validare i dati tramite la dashboard preesistente.
+- [ ] **Integrazione DualSense (PS5):** Lettura degli assi analogici (stick) e dei grilletti tramite API native (es. SDL/XInput). Mappatura degli input sui Setpoint dell'algoritmo PID, non direttamente sui motori.
+- [ ] **Virtual Telemetry Streaming
