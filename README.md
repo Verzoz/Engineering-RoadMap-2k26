@@ -15,7 +15,7 @@ Il percorso è diviso in 5 grandi moduli incrementali:
 
 ---
 
-## [Fase 1] - WPF Hardware Monitor
+## 🖥️[Fase 1] - WPF Hardware Monitor
 
 Un'applicazione desktop moderna per il monitoraggio in tempo reale delle prestazioni hardware (CPU, GPU, RAM), sviluppata in **C#** e **WPF** (Windows Presentation Foundation).
 
@@ -98,3 +98,45 @@ L'obiettivo finale è scalare il sistema. Con il calcolo "forza bruta", controll
 - [ ] **Spatial Partitioning (Griglie o QuadTree):** Implementazione di strutture dati spaziali avanzate per suddividere l'area di rendering, limitando il calcolo delle forze solo alle particelle appartenenti alle celle vicine.
 - [ ] **Stress Test:** Portare la simulazione fluida (60 FPS) oltre le 10.000 entità interattive simultanee.
 
+
+
+
+# 🤖 [Fase 3] - mCore Autonomous Rover
+
+Sviluppo di firmware embedded (C/C++) per un microcontrollore basato su architettura AVR (ATmega328P / Arduino Uno custom). 
+
+Questo progetto rappresenta il primo contatto con il mondo cyber-fisico. L'obiettivo è superare la pura simulazione software per costruire un sistema autonomo capace di leggere dati dall'ambiente reale, prendere decisioni tramite logica di controllo (Macchine a Stati Finiti) e comunicare lo stato operativo a una Ground Station (la dashboard sviluppata nella Fase 1).
+
+## 🎯 Competenze Target
+- Sviluppo Firmware "Bare Metal" e comprensione dei vincoli hardware (Limiti di clock, RAM misurata in Kilobyte).
+- Configurazione e utilizzo di interfacce I/O fisiche: GPIO, PWM (Pulse Width Modulation) e ADC (Analog-to-Digital Converter).
+- Architettura software per sistemi real-time (Interruzioni hardware, Watchdog, loop non bloccanti).
+- Design e implementazione di protocolli di comunicazione Seriale (UART) bidirezionali.
+
+---
+
+## 🗺️ Roadmap Architetturale (Fase 3)
+
+### Modulo 1: Hardware Abstraction Layer (HAL) e Attuazione
+L'obiettivo di questo modulo è separare la logica di alto livello dai dettagli fisici dei pin e dei registri della scheda mCore.
+- [ ] **Toolchain Setup:** Configurazione dell'ambiente di cross-compilazione (es. PlatformIO o Arduino IDE) e del programmatore seriale.
+- [ ] **Sottosistema di Attuazione (PWM):** Sviluppo di interfacce per il controllo proporzionale dei driver motori DC, gestendo accelerazione, decelerazione e inversione di polarità.
+- [ ] **Costruzione dell'HAL:** Creazione di classi C++ "wrapper" per incapsulare il controllo hardware (es. `MotorController`, `LEDManager`), garantendo che la logica di business ignori l'esistenza dei pin fisici.
+
+### Modulo 2: Acquisizione Dati e Signal Conditioning
+L'obiettivo di questo modulo è leggere lo stato del mondo fisico tramite i sensori integrati, gestendo l'inevitabile rumore elettrico e le latenze.
+- [ ] **Polling vs Interrupts:** Implementazione della lettura del sensore a ultrasuoni (Time-of-Flight) utilizzando interrupt hardware per non bloccare il ciclo di clock (Super Loop).
+- [ ] **Digital Signal Filtering:** Sviluppo di algoritmi di filtraggio matematico (es. Filtro a Media Mobile / Moving Average) per stabilizzare le letture dei sensori di distanza ed eliminare i "falsi positivi" generati dal rumore ambientale.
+- [ ] **Gestione Sensori Ottici:** Calibrazione e lettura analogica del modulo Line Follower (sensori a infrarossi) per il riconoscimento dei pattern a terra.
+
+### Modulo 3: Logica di Autonomia (Macchina a Stati)
+L'obiettivo di questo modulo è dotare il rover di un "cervello" reattivo, sostituendo i semplici script sequenziali (`delay()`) con architetture decisionali robuste.
+- [ ] **Finite State Machine (FSM):** Progettazione e codifica di una Macchina a Stati Finiti per la gestione dei comportamenti (es. `Stato_Esplorazione`, `Stato_Ostacolo_Rilevato`, `Stato_Evasione`).
+- [ ] **Timer Non Bloccanti:** Sostituzione di tutte le attese bloccanti con delta-time basati sul clock di sistema (es. `millis()`), garantendo che il rover possa ascoltare sensori e muovere motori simultaneamente.
+- [ ] **Safety & Fail-Safe:** Implementazione di logiche di sicurezza (es. spegnimento istantaneo dei motori se le letture dei sensori impazziscono o se la connessione cade).
+
+### Modulo 4: Telemetria e Integrazione PC (Ground Station)
+L'obiettivo finale è chiudere il cerchio dell'intero ecosistema sviluppato finora: far dialogare il rover fisico (Fase 3) con la dashboard WPF sul PC (Fase 1).
+- [ ] **Design del Protocollo Seriale:** Creazione di un protocollo a pacchetti custom e leggero (es. `<START_BYTE> <COMANDO> <PAYLOAD> <CHECKSUM> <END_BYTE>`) per inviare dati senza corruzione.
+- [ ] **Data Streaming (Rover -> PC):** Trasmissione in tempo reale via cavo o Bluetooth delle metriche interne (distanza ostacoli, velocità motori, stato FSM).
+- [ ] **WPF Telemetry Integration:** Aggiornamento del progetto C# (Fase 1) per aprire la porta COM, decodificare i pacchetti seriali del rover e tracciare le misurazioni fisiche sul grafico dinamico in sostituzione dei dati WMI.
