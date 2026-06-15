@@ -15,22 +15,42 @@ Il percorso è diviso in 5 grandi moduli incrementali:
 
 ---
 
-## 🔍 Zoom: Fase 1 - WPF Hardware Monitor
+## Fase 1 - WPF Hardware Monitor
 
-**Obiettivo:** Creare un'interfaccia desktop simil-Afterburner per leggere e tracciare le prestazioni di CPU e GPU, imparando a gestire architetture Multithread e il mapping di dati matematici su schermo.
+Un'applicazione desktop moderna per il monitoraggio in tempo reale delle prestazioni hardware (CPU, GPU, RAM), sviluppata in **C#** e **WPF** (Windows Presentation Foundation).
 
-### Modulo 1.1: Il Motore Grafico (Base)
-- [x] **Step 1: Struttura Base XAML.** Setup della `Grid`, del `Canvas` e della griglia cartesiana (offset di 20px per origine assi).
-- [x] **Step 2: Logica Matematica.** Creazione algoritmo "Forza Bruta" per test di stress della CPU (Caccia ai numeri primi).
-- [ ] **Step 3: Normalizzazione Dati.** Convertire i valori matematici puri in coordinate `(X, Y)` relative allo schermo (`ActualWidth`/`ActualHeight`).
-- [ ] **Step 4: Rendering Dinamico.** Collegare dinamicamente una `PointCollection` a una `Polyline` in XAML.
+Questo progetto è il primo capitolo della *Engineering Roadmap 2026* e ha l'obiettivo di esplorare l'architettura delle interfacce grafiche, il multithreading e l'interfacciamento con i sensori fisici del PC.
 
-### Modulo 1.2: Architettura Multithreading
-- [ ] **Step 5: Isolamento del Calcolo.** Spostare l'algoritmo di stress in background usando `Task.Run` per evitare il freeze della UI.
-- [ ] **Step 6: Sincronizzazione a Blocchi.** Usare `Dispatcher.Invoke` per comunicare con il Main Thread solo al termine di specifici "chunk" di dati, evitando il flooding.
-- [ ] **Step 7: UI Feedback.** Inserire `ProgressBar` e `TextBlock` reattivi in base ai messaggi del background thread.
+## 🎯 Competenze Target
+- Sviluppo UI dichiarativa tramite **XAML**.
+- Gestione della concorrenza e pattern **Multithreading** (Task & Dispatcher).
+- Acquisizione e parsing di dati hardware di basso livello tramite librerie esterne.
+- Rappresentazione grafica dinamica di serie temporali (Data Visualization).
 
-### Modulo 1.3: Interfacciamento Hardware
-- [ ] **Step 8: Libreria Sensori.** Sostituire il generatore matematico con `LibreHardwareMonitorLib` per leggere il WMI.
-- [ ] **Step 9: Isolamento Sensori.** Filtrare l'albero hardware per puntare ai sensori di temperatura del Ryzen 5 5600x e carico della RTX 3060.
-- [ ] **Step 10: Effetto "Heartbeat" (Scorrimento).** Sostituire il loop statico con un `DispatcherTimer` a 1000ms.
+---
+
+## 🗺️ Roadmap Architetturale (Fase 1)
+
+### Modulo 1: Il Motore di Rendering (UI & Grafica)
+L'obiettivo di questo modulo è creare l'infrastruttura visiva capace di disegnare grafici vettoriali in base a dati numerici astratti.
+- [ ] **Setup Ambiente WPF:** Strutturazione del layout principale (Grid, Pannelli di controllo, Area Grafico).
+- [ ] **Sistema di Coordinate:** Implementazione della logica di mappatura per tradurre valori numerici astratti nelle coordinate fisiche della finestra.
+- [ ] **Disegno Vettoriale Dinamico:** Utilizzo di oggetti WPF nativi (es. `Polyline`, `PointCollection`) per tracciare linee aggiornabili via codice.
+
+### Modulo 2: Il Motore Asincrono (Multithreading)
+L'obiettivo di questo modulo è separare la logica di business e di calcolo dal thread dell'interfaccia utente, prevenendo freeze e lag.
+- [ ] **Isolamento dei Task:** Spostare i carichi di lavoro simulati in thread di background separati.
+- [ ] **Comunicazione Inter-Thread:** Implementare il pattern di delega (tramite `Dispatcher`) per permettere ai thread di background di aggiornare la UI in sicurezza.
+- [ ] **Sincronizzazione Dati:** Ottimizzare la frequenza di aggiornamento grafico per mantenere i 60 FPS senza inondare (flooding) la coda dei messaggi di Windows.
+
+### Modulo 3: Il Motore Sensoriale (Hardware API)
+L'obiettivo di questo modulo è sostituire i dati simulati con letture reali provenienti dall'hardware della macchina (WMI).
+- [ ] **Integrazione API Esterne:** Inclusione e setup di librerie specializzate (es. LibreHardwareMonitorLib).
+- [ ] **Interrogazione dell'Hardware Tree:** Scansione dei nodi del sistema per isolare sensori specifici (es. Carico GPU RTX, Temperature Core Ryzen).
+- [ ] **Gestione Privilegi:** Configurazione dell'eseguibile per la richiesta di permessi di Amministratore, necessari per le letture a basso livello.
+
+### Modulo 4: Il Loop di Monitoraggio (Sistema Finale)
+L'obiettivo di questo modulo è unire i precedenti per creare un ciclo continuo, stabile e autonomo di lettura e disegno.
+- [ ] **Implementazione del Polling:** Creazione di un Timer di sistema per campionare i dati hardware a intervalli regolari (es. 1000ms).
+- [ ] **Buffer Circolare (Effetto Scorrimento):** Modifica dell'algoritmo di disegno per gestire code di dati FIFO, permettendo al grafico di scorrere visivamente nel tempo (rimuovendo i dati obsoleti).
+- [ ] **Polish UI (Simil-Afterburner):** Separazione degli stili XAML in ResourceDictionaries e organizzazione della dashboard in sezioni tematiche (CPU, GPU, RAM).
