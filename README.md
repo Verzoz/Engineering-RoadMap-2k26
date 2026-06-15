@@ -185,42 +185,42 @@ L'obiettivo di questo modulo è connettere l'umano alla simulazione e validare i
 
 
 
+# 🌍 [Fase 5] - Real-World Autonomous Quadcopter
 
-# 🚁 [Fase 4] - 3D Quadcopter Simulator & PID Control
+Ingegnerizzazione e collaudo di un drone quadricottero fisico, governato da un Flight Controller custom basato sull'architettura AVR (ATmega328P / mCore) sviluppata nella Fase 3, e alimentato dalla matematica di controllo (PID) derivata dalla Fase 4.
 
-Sviluppo di un simulatore di volo tridimensionale custom (C/C++) per modellare la fisica di un quadricottero e testare algoritmi di stabilizzazione automatica.
-
-Questo progetto rappresenta il culmine della simulazione software prima del salto finale nel mondo reale. L'obiettivo è costruire un ambiente virtuale in cui validare matematicamente le logiche di controllo di volo, garantendo che il drone virtuale possa essere pilotato fluidamente tramite un controller fisico moderno (DualSense) senza ribaltarsi.
+Questo progetto è il test finale dell'intera roadmap. L'obiettivo è superare le discrepanze tra la simulazione (perfetta) e la realtà (imperfetta, rumorosa e soggetta a vibrazioni), realizzando una macchina volante capace di mantenere un hovering stabile (auto-livellamento) e rispondere in tempo reale agli input del pilota.
 
 ## 🎯 Competenze Target
-- Matematica Spaziale 3D: Matrici di trasformazione e Quaternioni (per la risoluzione del problema del *Gimbal Lock*).
-- Fisica dei Corpi Rigidi: Gestione dei 6 Gradi di Libertà (6DoF), calcolo dei momenti torcenti (Torque) e vettori di spinta.
-- Teoria dei Controlli: Progettazione, implementazione e *tuning* di un controllore PID (Proporzionale-Integrale-Derivativo) a cascata.
-- Human-Machine Interface (HMI): Interfacciamento nativo a basso livello con periferiche di input complesse.
+- **Sensor Fusion:** Filtraggio matematico avanzato (Filtro Complementare o Kalman) per unire dati di accelerometri e giroscopi.
+- **Elettronica di Potenza:** Dimensionamento e pilotaggio di motori Brushless, ESC (Electronic Speed Controllers) e gestione di batterie LiPo ad alta scarica.
+- **Real-Time Computing Estremo:** Ottimizzazione del codice C++ per garantire un ciclo di controllo (Loop Time) costante >250Hz su una CPU a 8-bit / 16MHz.
+- **Ingegneria dei Sistemi:** Isolamento delle vibrazioni meccaniche, bilanciamento dei pesi e cablaggio aeronautico.
 
 ---
 
-## 🗺️ Roadmap Architetturale (Fase 4)
+## 🗺️ Roadmap Architetturale (Fase 5)
 
-### Modulo 1: Infrastruttura 3D e Rendering
-L'obiettivo di questo modulo è elevare il motore grafico sviluppato nella Fase 2 allo spazio tridimensionale, creando il "banco di prova" visivo.
-- [ ] **Setup Pipeline 3D:** Inizializzazione di un contesto grafico 3D (tramite OpenGL o framework equivalenti) con gestione di Z-Buffer e proiezioni prospettiche.
-- [ ] **Modellazione Astratta:** Creazione di una rappresentazione visiva semplificata del drone (es. due cilindri incrociati per i bracci e indicatori per i rotori) per verificare visivamente orientamento e assetto.
-- [ ] **Telecamera Dinamica (Chase Cam):** Implementazione di una telecamera in terza persona vincolata matematicamente al modello, capace di seguirne fluidamente traslazioni e rotazioni.
+### Modulo 1: Sensor Fusion e Acquisizione Assetto (IMU)
+L'obiettivo di questo modulo è dare al drone un "senso dell'equilibrio" immune alle feroci vibrazioni generate dai motori.
+- [ ] **Integrazione MPU6050:** Cablaggio tramite bus I2C di un'unità IMU (Inertial Measurement Unit) a 6 assi e lettura dei dati grezzi.
+- [ ] **Calibrazione Statica:** Algoritmi per il calcolo e la sottrazione degli offset (bias) di giroscopio e accelerometro all'avvio.
+- [ ] **Filtro Complementare:** Implementazione matematica per fondere l'affidabilità a lungo termine dell'accelerometro con la reattività a breve termine del giroscopio, ottenendo angoli di Pitch e Roll puliti.
 
-### Modulo 2: Fisica del Corpo Rigido e Cinematica (6DoF)
-L'obiettivo di questo modulo è applicare la gravità e modellare il modo in cui le spinte indipendenti dei 4 motori influenzano lo stato del drone nello spazio.
-- [ ] **Dinamica di Base:** Implementazione della massa, dell'inerzia e della gravità sul centro di massa del modello.
-- [ ] **Modello di Spinta dei Rotori:** Sviluppo di un sistema in cui ogni "motore" virtuale genera un vettore di spinta verticale e una coppia (torque) inversamente proporzionale.
-- [ ] **Calcolo dell'Assetto (Attitude):** Conversione delle spinte combinate nei movimenti fisici fondamentali del volo: Beccheggio (Pitch), Rollio (Roll), Imbardata (Yaw) e Traslazione Verticale (Thrust/Manetta).
+### Modulo 2: Elettronica di Potenza (I Muscoli)
+L'obiettivo di questo modulo è interfacciarsi con il sistema propulsivo, superando i limiti dei piccoli motori DC della mCore.
+- [ ] **Setup ESC e Motori Brushless:** Cablaggio del power distribution board e comprensione del protocollo di segnale PWM standard (50Hz-400Hz) o OneShot125 per istruire gli ESC.
+- [ ] **Generazione Segnali Hardware:** Sviluppo in C++ di routine basate sui Timer a 16-bit dell'ATmega328P per generare 4 segnali PWM simultanei e precisissimi al microsecondo.
+- [ ] **Arming & Safety Protocol:** Implementazione di una sequenza di sicurezza rigorosa: i motori non devono girare finché non viene ricevuta una specifica combinazione di input (Prevenzione infortuni).
 
-### Modulo 3: Teoria dei Controlli (Sistema PID)
-L'obiettivo di questo modulo è il cuore ingegneristico del progetto: scrivere l'algoritmo che impedisce al sistema di collassare, mantenendo il drone parallelo al suolo in assenza di input.
-- [ ] **Implementazione PID Controller:** Sviluppo di una classe riutilizzabile che, dati un Setpoint (angolo desiderato) e un Input (angolo attuale), calcola l'Output correttivo sommando gli errori Proporzionali, Integrali e Derivativi.
-- [ ] **PID Multi-Asse:** Istanziamento di cicli PID indipendenti per Roll, Pitch e Yaw. I risultati dei PID devono essere "miscelati" (Motor Mixing Algorithm) per decidere la velocità finale di ogni singolo rotore.
-- [ ] **Tuning del Loop di Controllo:** Metodologia empirica per calibrare i pesi ($Kp$, $Ki$, $Kd$) di ogni asse per eliminare oscillazioni e garantire una risposta reattiva del sistema.
+### Modulo 3: Il Trapianto del Cervello (Embedded PID)
+L'obiettivo di questo modulo è prendere la logica di controllo perfetta della Fase 4 (PC) e farla sopravvivere nel microcontrollore reale.
+- [ ] **Porting del Codice:** Adattamento della classe PID dal C++ del simulatore al firmware Arduino.
+- [ ] **Ottimizzazione Aritmetica:** Sostituzione delle operazioni in virgola mobile (`float`) non essenziali con aritmetica a virgola fissa (Fixed-Point) o interi moltiplicati, per scaricare la CPU e mantenere il Loop Time sotto i 4 millisecondi.
+- [ ] **Mixer Cinematico:** Algoritmo finale che prende i Setpoint dal pilota (Radio), calcola le correzioni PID sui 3 assi e distribuisce la potenza (+/-) ai 4 motori secondo la geometria a "X" del telaio.
 
-### Modulo 4: Human-Machine Interface e Telemetria
-L'obiettivo di questo modulo è connettere l'umano alla simulazione e validare i dati tramite la dashboard preesistente.
-- [ ] **Integrazione DualSense (PS5):** Lettura degli assi analogici (stick) e dei grilletti tramite API native (es. SDL/XInput). Mappatura degli input sui Setpoint dell'algoritmo PID, non direttamente sui motori.
-- [ ] **Virtual Telemetry Streaming
+### Modulo 4: Collaudo, Tuning e Ground Station
+L'obiettivo di questo modulo è il volo. Dalla prima accensione al primo hovering in aria libera, monitorando ogni variabile critiche.
+- [ ] **Integrazione Ricevente RC:** Lettura dei segnali radio (PPM o SBUS) del radiocomando per catturare gli input fisici del pilota (Roll, Pitch, Yaw, Throttle) e traslarli in Setpoint per il PID.
+- [ ] **Tethered Test (Tuning al banco):** Fissaggio del drone a una struttura vincolata (es. test stand a 1 asse) per calibrare empiricamente i valori $Kp, Ki, Kd$ senza rischiare schianti.
+- [ ] **Live Telemetry via RF:** Configurazione di un modulo radio (es. NRF24L01) per spedire i dati di volo in tempo reale alla dashboard WPF (Fase 1), chiudendo definitivamente il cerchio di tutta l'infrastruttura software.
