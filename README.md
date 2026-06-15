@@ -15,7 +15,7 @@ Il percorso è diviso in 5 grandi moduli incrementali:
 
 ---
 
-## Fase 1 - WPF Hardware Monitor
+## [Fase 1] - WPF Hardware Monitor
 
 Un'applicazione desktop moderna per il monitoraggio in tempo reale delle prestazioni hardware (CPU, GPU, RAM), sviluppata in **C#** e **WPF** (Windows Presentation Foundation).
 
@@ -54,3 +54,47 @@ L'obiettivo di questo modulo è unire i precedenti per creare un ciclo continuo,
 - [ ] **Implementazione del Polling:** Creazione di un Timer di sistema per campionare i dati hardware a intervalli regolari (es. 1000ms).
 - [ ] **Buffer Circolare (Effetto Scorrimento):** Modifica dell'algoritmo di disegno per gestire code di dati FIFO, permettendo al grafico di scorrere visivamente nel tempo (rimuovendo i dati obsoleti).
 - [ ] **Polish UI (Simil-Afterburner):** Separazione degli stili XAML in ResourceDictionaries e organizzazione della dashboard in sezioni tematiche (CPU, GPU, RAM).
+
+
+
+
+# ⚛️ [Fase 2] - C++ Particle Engine 2D
+
+Un motore fisico bidimensionale scritto da zero in **C/C++**. 
+
+Questo progetto segna la transizione dall'ecosistema gestito (.NET/C#) alla programmazione a basso livello ("Bare Metal"). L'obiettivo è costruire un simulatore capace di calcolare e renderizzare le interazioni elettromagnetiche e cinematiche tra migliaia di particelle in tempo reale, affrontando le sfide classiche dello sviluppo di motori grafici e fisici.
+
+## 🎯 Competenze Target
+- Gestione manuale della memoria (Allocazione dinamica, Puntatori e Memory Leaks).
+- Architettura software basata su **Game Loop** (Input, Update, Render) e *Fixed Time Step*.
+- Implementazione di logiche di **Integrazione Numerica** (es. Metodo di Eulero o Verlet) per la simulazione cinematica.
+- Ottimizzazione algoritmica avanzata: superare il limite computazionale $O(N^2)$ per le interazioni a molti corpi.
+
+---
+
+## 🗺️ Roadmap Architetturale (Fase 2)
+
+### Modulo 1: Infrastruttura e Rendering Base (Il Core)
+L'obiettivo di questo modulo è configurare l'ambiente di compilazione C/C++ e stabilire il battito cardiaco dell'applicazione: il Game Loop.
+- [ ] **Build System:** Configurazione del compilatore e del sistema di build (es. CMake o Makefile) per gestire dipendenze e link statici/dinamici.
+- [ ] **Astrazione Grafica:** Setup di un layer grafico essenziale tramite librerie native (es. Raylib o SDL2) per l'apertura del contesto OpenGL e il disegno di primitive.
+- [ ] **Game Loop Architecture:** Implementazione di un ciclo di vita ad alta frequenza che separi rigidamente l'elaborazione degli input, l'aggiornamento dello stato fisico e il rendering a schermo.
+
+### Modulo 2: Sottosistema Matematico e Cinematico
+L'obiettivo di questo modulo è definire le regole dello spazio bidimensionale e far muovere i primi oggetti basandosi sulle leggi del moto.
+- [ ] **Libreria Algebra Vettoriale:** Sviluppo di strutture dati custom (es. `Vector2`) per calcolare somme, differenze, prodotti scalari e distanze euclidee.
+- [ ] **Rappresentazione dello Stato:** Definizione delle entità fisiche tramite attributi vettoriali isolati (Posizione, Velocità, Accelerazione, Massa).
+- [ ] **Integrazione Temporale:** Traduzione del Tempo Delta ($dt$) in spostamento spaziale, applicando la gravità e i vincoli ambientali (es. rimbalzo perfettamente elastico sui bordi della finestra).
+
+### Modulo 3: Il Motore Dinamico (Forze e N-Body Problem)
+L'obiettivo di questo modulo è far interagire le particelle tra loro, applicando le leggi della dinamica e dell'elettromagnetismo.
+- [ ] **Campi di Forza:** Implementazione di funzioni per applicare forze continue e repentine (es. Legge di Coulomb per l'attrazione/repulsione).
+- [ ] **Broad-Phase Collision Detection:** Sviluppo di logiche per individuare quali entità sono sufficientemente vicine da collidere (sovrapposizione di bounding box o raggi).
+- [ ] **Collision Response:** Calcolo della conservazione della quantità di moto per risolvere urti elastici tra entità con masse diverse.
+
+### Modulo 4: Ottimizzazione Strutturale (Performance)
+L'obiettivo finale è scalare il sistema. Con il calcolo "forza bruta", controllare ogni particella contro tutte le altre ($N^2$) fa collassare la CPU già a 1.000 entità.
+- [ ] **Profilazione Memoria:** Utilizzo di tool di base per identificare colli di bottiglia computazionali e ottimizzare la localizzazione in cache (Data-Oriented Design).
+- [ ] **Spatial Partitioning (Griglie o QuadTree):** Implementazione di strutture dati spaziali avanzate per suddividere l'area di rendering, limitando il calcolo delle forze solo alle particelle appartenenti alle celle vicine.
+- [ ] **Stress Test:** Portare la simulazione fluida (60 FPS) oltre le 10.000 entità interattive simultanee.
+
